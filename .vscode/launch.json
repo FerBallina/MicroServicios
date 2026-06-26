@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos.
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Chrome feriados",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080/web-consultarfecha/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "java",
+            "name": "ConsultarFechaApplication",
+            "request": "launch",
+            "mainClass": "com.example.consultarfecha.ConsultarFechaApplication",
+            "projectName": "consultarfecha"
+        },
+        {
+            "type": "java",
+            "name": "FeriadosApplication",
+            "request": "launch",
+            "mainClass": "com.example.feriados.FeriadosApplication",
+            "projectName": "feriados"
+        }
+    ]
+}

@@ -21,6 +21,9 @@ public class ConsultarFechaService {
     }
 
     public ConsultaFechaResponse consultar(LocalDate fecha, int cantidadDias) {
+        System.out.println("Fecha recibida: " + fecha);
+        System.out.println("Cantidad de días: " + cantidadDias);
+        
         LocalDate fechaResultado = fecha.plusDays(cantidadDias);
 
         FeriadoResponse feriadoResponse = consultarFeriado(fechaResultado);

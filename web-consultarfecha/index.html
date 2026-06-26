@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Fecha - Feriados</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Consultar Feriado</h1>
+            
+            <div class="form-group">
+                <label for="fecha">Fecha (dd/mm/yyyy):</label>
+                <input type="date" id="fecha" placeholder="Ingrese la fecha">
+            </div>
+
+            <div class="form-group">
+                <label for="cantidad-dias">Cantidad de días:</label>
+                <input type="number" id="cantidad-dias" min="0" value="0" placeholder="Ingrese cantidad de días">
+            </div>
+
+            <button id="consultar-btn" class="btn-consultar">Consultar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

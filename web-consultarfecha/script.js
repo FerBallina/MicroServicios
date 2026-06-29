@@ -1,13 +1,15 @@
 // Configuración
-const API_URL = 'http://localhost:8081/consultarFecha';
+const API_URL = 'https://sturdy-space-capybara-6vq54pqv7wwf5x4-8081.app.github.dev/consultarFecha';
 
 // Elementos del DOM
 const fechaInput = document.getElementById('fecha');
 const cantidadDiasInput = document.getElementById('cantidad-dias');
 const consultarBtn = document.getElementById('consultar-btn');
+const consultarBtnTodas = document.getElementById('todas-btn');
 
 // Event Listeners
 consultarBtn.addEventListener('click', consultar);
+consultarBtnTodas.addEventListener('click', consultarTodas);
 
 // Permitir enviar con Enter
 fechaInput.addEventListener('keypress', (e) => {
@@ -17,6 +19,42 @@ fechaInput.addEventListener('keypress', (e) => {
 cantidadDiasInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') consultar();
 });
+
+async function consultarTodas() {
+    // Deshabilitar el botón mientras se procesa
+    consultarBtnTodas.disabled = true;
+    consultarBtnTodas.textContent = 'Consultando...';
+
+    try {
+        // Convertir fecha de DD/MM/YYYY a YYYY-MM-DD si es necesario
+
+        console.log('Enviando payload:');
+
+        const response = await fetch(API_URL+"/all", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Respuesta del servidor:', data);
+
+        // Mostrar resultado
+        mostrarResultado(true, data, true);
+
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError(`Error al consultar: ${error.message}`);
+    } finally {
+        consultarBtnTodas.disabled = false;
+        consultarBtnTodas.textContent = 'Todos los feriados';
+    }
+}
 
 async function consultar() {
     // Validar que la fecha esté ingresada
@@ -43,7 +81,7 @@ async function consultar() {
 
         console.log('Enviando payload:', payload);
 
-        const response = await fetch(API_URL, {
+        const response = await fetch(API_URL+"/consultarFecha", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -59,7 +97,7 @@ async function consultar() {
         console.log('Respuesta del servidor:', data);
 
         // Mostrar resultado
-        if (data.esFeriado) {
+        if (data.feriado) {
             mostrarResultado(true, data.nombre || 'Feriado');
         } else {
             mostrarResultado(false);
@@ -89,14 +127,26 @@ function convertirFecha(fecha) {
     return fecha;
 }
 
-function mostrarResultado(esFeriado, nombreFeriado = '') {
+function mostrarResultado(esFeriado, nombreFeriado = '', esConsulta = false) {
     const modal = document.createElement('div');
     modal.className = 'modal';
     modal.style.display = 'block';
 
     let contenido = '';
     if (esFeriado) {
-        contenido = `
+        if (esConsulta){
+            contenido = `
+            <div class="modal-content feriado">
+                <div class="icon">🎉</div>
+                <h2>Son Feriados:</h2>
+                <p>${nombreFeriado}</p>
+                <div class="modal-buttons">
+                    <button class="btn-ok" onclick="cerrarModal(this.parentElement.parentElement.parentElement)">Aceptar</button>
+                </div>
+            </div>
+            `;
+        }else{
+            contenido = `
             <div class="modal-content feriado">
                 <div class="icon">🎉</div>
                 <h2>¡Es Feriado!</h2>
@@ -106,6 +156,7 @@ function mostrarResultado(esFeriado, nombreFeriado = '') {
                 </div>
             </div>
         `;
+        }
     } else {
         contenido = `
             <div class="modal-content no-feriado">

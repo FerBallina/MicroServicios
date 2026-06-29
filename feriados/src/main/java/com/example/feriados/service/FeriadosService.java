@@ -3,6 +3,8 @@ package com.example.feriados.service;
 import com.example.feriados.dto.FeriadoResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +14,12 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.slf4j.Logger;
 
 @Service
 public class FeriadosService {
+
+    private static final Logger logger = LoggerFactory.getLogger(FeriadosService.class);
 
     private final Set<LocalDate> feriados = new HashSet<>();
     private final ObjectMapper objectMapper;
@@ -33,7 +38,13 @@ public class FeriadosService {
     }
 
     public FeriadoResponse checkFeriado(LocalDate fecha) {
+        logger.info("Verificando si {} es feriado", fecha);
         boolean esFeriado = feriados.contains(fecha);
         return new FeriadoResponse(fecha, esFeriado);
+    }
+
+    public Set<LocalDate> checkFeriados() {
+        logger.info("Devolver lista de feriados");
+        return feriados;
     }
 }

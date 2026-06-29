@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/consultarFecha")
-@CrossOrigin(origins = "*")
+@Tag(name = "Consultar Fecha", description = "consulta fechas de feriados")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 
 public class ConsultarFechaController {
     private final ConsultarFechaService consultarFechaService;
@@ -23,8 +27,9 @@ public class ConsultarFechaController {
     public ConsultarFechaController(ConsultarFechaService consultarFechaService) {
         this.consultarFechaService = consultarFechaService;
     }
-
+    
     @PostMapping("/consultarFecha")
+    @Operation(summary = "Consulta una fecha particular", description = "consulta una fecha y la cantidad de dias para ver si es feriado.")
     public ConsultaFechaResponse consultarFecha(@RequestBody ConsultaFechaRequest request) {
         return consultarFechaService.consultar(request.getFecha(), request.getCantidadDias());
     }

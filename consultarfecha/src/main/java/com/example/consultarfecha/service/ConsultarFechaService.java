@@ -3,7 +3,8 @@ package com.example.consultarfecha.service;
 import com.example.consultarfecha.dto.ConsultaFechaResponse;
 import com.example.consultarfecha.dto.FeriadoResponse;
 
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -12,23 +13,22 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.slf4j.Logger;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ConsultarFechaService {
 
     private final RestTemplate restTemplate;
-    private static final Logger logger = LoggerFactory.getLogger(ConsultarFechaService.class);
 
     public ConsultarFechaService() {
         this.restTemplate = new RestTemplate();
     }
 
     public ConsultaFechaResponse consultar(LocalDate fecha, int cantidadDias) {
-        logger.info("Fecha recibida: {}, dias: {}", fecha, cantidadDias);
+        log.info("Fecha recibida: {}, dias: {}", fecha, cantidadDias);
         System.out.println("Fecha recibida: " + fecha);
         System.out.println("Cantidad de días: " + cantidadDias);
         
@@ -43,13 +43,13 @@ public class ConsultarFechaService {
     }
 
     public ConsultaFechaResponse consultarToday() {
-        logger.info("Sin fecha recibida");
+        log.info("Sin fecha recibida");
     
         return new ConsultaFechaResponse(LocalDate.now() , 0, false);
     }
 
     public List<String> consultarTodos() {
-        logger.info("Devolviendo todos los feriados");
+        log.info("Devolviendo todos los feriados");
     
         return consultarFeriados();
     }
@@ -67,6 +67,7 @@ public class ConsultarFechaService {
         return response.getBody();
     }
 
+    @SuppressWarnings("null")
     private List<String> consultarFeriados() {
         String url = "http://localhost:8082/feriados/all";
         HttpHeaders headers = new HttpHeaders();

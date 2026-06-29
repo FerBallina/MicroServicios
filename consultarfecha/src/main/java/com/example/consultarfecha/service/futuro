@@ -1,0 +1,52 @@
+package com.ejemplo.api.servicio;
+
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+//TODO agregar métricas de prometheus
+
+@Slf4j // Inyecta el logger automáticamente gracias a Lombok
+@Service
+public class PagoServicio {
+
+    private final Counter contadorPagosExitosos;
+    private final MeterRegistry meterRegistry;
+
+    public PagoServicio(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+        // Definición de métrica personalizada con Tags estructurados
+        this.contadorPagosExitosos = Counter.builder("tienda.pagos.completados")
+                .description("Cantidad total de pagos procesados con éxito")
+                .tag("entorno", "produccion")
+                .register(meterRegistry);
+    }
+
+    public void procesarPago(Long pedidoId, Double monto, String metodoPago) {
+        log.info("Iniciando procesamiento de pago para el pedido ID: {} por un monto de {}", pedidoId, monto); // Interpolación sin '+'
+
+        try {
+            // Un Timer mide el tiempo exacto que tarda la operación crítica
+            Timer.resource(meterRegistry, "tienda.pagos.duracion")
+                    .tag("metodo", metodoPago)
+                    .record(() -> {
+                        // Lógica simulada de pasarela de pago
+                        if (monto <= 0) {
+                            throw new IllegalArgumentException("El monto debe ser mayor a cero");
+                        }
+                    });
+
+            contadorPagosExitosos.increment();
+            log.info("Pago procesado exitosamente para el pedido ID: {}", pedidoId);
+
+        } catch (IllegalArgumentException ex) {
+            log.warn("Intento de pago inválido para el pedido ID: {}. Razón: {}", pedidoId, ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Fallo crítico al procesar el pago para el pedido ID: {}", pedidoId, ex); // Captura el stack trace completo
+            throw ex;
+        }
+    }
+}

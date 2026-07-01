@@ -1,2 +1,5 @@
 consultarfecha/target/classes
 feriados/target/classes
+feriados/target/maven-status
+feriados/target/surefire-reports
+feriados/target/test-classes

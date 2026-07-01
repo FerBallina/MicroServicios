@@ -1,4 +1,4 @@
-package steps;
+package E2EferiadosService;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;

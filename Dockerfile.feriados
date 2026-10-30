@@ -2,7 +2,7 @@ FROM maven:3.9-eclipse-temurin-25 AS build
 WORKDIR /app
 COPY . .
 # Compila específicamente el módulo feriados
-RUN mvn clean package -DskipTests -pl feriados -am
+RUN mvn clean package -DskipTests -f "/app/feriados/pom.xml"
 
 FROM eclipse-temurin:25-jre
 WORKDIR /app

@@ -74,7 +74,7 @@ public class KafkaIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().isOk()); // Verifica que el controller responda HTTP 200
 
         // 3. El test ESPERA un máximo de 5 segundos a que Kafka distribuya el mensaje y el Listener lo procese
-        boolean mensajeProcesado = consumerService.getLatch().await(10, TimeUnit.SECONDS);
+        boolean mensajeProcesado = consumerService.getLatch().await(5, TimeUnit.SECONDS);
 
         // 4. Verificaciones finales
         assertTrue(mensajeProcesado, "El flujo falló: El Controller no envió el mensaje o el Consumidor no lo recibió a tiempo");

@@ -1,12 +1,12 @@
 # Paso 1: Construir el JAR usando el proyecto padre
-FROM maven:3.9-eclipse-temurin-25 AS build
+FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
 COPY . .
 # Compila solo el microservicio 'consultarfecha' y sus dependencias necesarias
 RUN mvn clean package -DskipTests -pl consultarfecha -am
 
 # Paso 2: Ejecutar la aplicación
-FROM eclipse-temurin:25-jre
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 # Copia el JAR generado dentro de la carpeta del microservicio
 COPY --from=build /app/consultarfecha/target/*.jar app.jar

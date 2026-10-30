@@ -19,7 +19,7 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
-        <!-- Para el anotation post construct del servicio-->
+        <!-- Para el anotation PostConstruct del servicio-->
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.36</version>
+            <version>1.18.38</version>
             <scope>provided</scope>
         </dependency>
 
@@ -109,6 +109,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Dependencia de pruebas de Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

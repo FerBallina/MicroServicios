@@ -1,13 +1,23 @@
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
 COPY . .
-# Compila específicamente el módulo feriados
+
+# 1. Compila el proyecto generando las clases básicas
 RUN mvn clean package -pl feriados -am -DskipTests
 
-RUN echo "--- CONTENIDO DEL JAR ---" && jar tf /app/feriados/target/feriados-0.0.1-SNAPSHOT.jar
+# 2. Forzamos a Maven a copiar todas las librerías/dependencias externas a una carpeta temporal
+RUN mvn dependency:copy-dependencies -pl feriados -DoutputDirectory=/app/feriados/target/dependency
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
+
+# 3. Copiamos tu JAR plano
 COPY --from=build /app/feriados/target/feriados-0.0.1-SNAPSHOT.jar feriados-api.jar
+
+# 4. Copiamos TODAS las librerías que extrajimos en el paso anterior
+COPY --from=build /app/feriados/target/dependency /app/dependency
+
 EXPOSE 8080
-ENTRYPOINT ["java", "-cp", "feriados-api.jar", "com.microsservicios.feriados.FeriadosApplication"]
+
+# 5. Iniciamos incluyendo tu JAR y la carpeta de dependencias en el Classpath, apuntando a tu Main REAL
+ENTRYPOINT ["java", "-cp", "feriados-api.jar:/app/dependency/*", "com.example.feriados.FeriadosApplication"]

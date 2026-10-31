@@ -13,7 +13,7 @@ WORKDIR /app
 # Copiamos el Fat JAR corregido que ahora contiene todo adentro
 COPY --from=build /app/consultarfecha/target/consultarfecha-0.0.1-SNAPSHOT.jar consultarfecha-api.jar
 
-EXPOSE 8080
+EXPOSE 8081
 
 # Comando nativo estándar: Spring Boot sabe exactamente cómo leer el contenido de BOOT-INF
 ENTRYPOINT ["java", "-jar", "consultarfecha-api.jar"]

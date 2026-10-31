@@ -3,6 +3,7 @@ package com.example.consultarfecha.service;
 import com.example.consultarfecha.dto.ConsultaFechaResponse;
 import com.example.consultarfecha.dto.FeriadoResponse;
 
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -22,6 +23,9 @@ import java.util.List;
 public class ConsultarFechaService {
 
     private final RestTemplate restTemplate;
+
+    @Value("${url.servicio.feriados}")
+    private String urlServicioFeriados;
 
     public ConsultarFechaService() {
         this.restTemplate = new RestTemplate();
@@ -55,7 +59,7 @@ public class ConsultarFechaService {
     }
 
     private FeriadoResponse consultarFeriado(LocalDate fecha) {
-        String url = "http://localhost:8082/feriados/check";
+        String url = urlServicioFeriados + "/feriados/check";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -69,7 +73,7 @@ public class ConsultarFechaService {
 
     @SuppressWarnings("null")
     private List<String> consultarFeriados() {
-        String url = "http://localhost:8082/feriados/all";
+        String url = urlServicioFeriados + "/feriados/all";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

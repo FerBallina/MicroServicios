@@ -4,6 +4,8 @@ COPY . .
 # Compila específicamente el módulo feriados
 RUN mvn clean package -pl feriados -am -DskipTests
 
+RUN echo "--- CONTENIDO DEL JAR ---" && jar tf /app/feriados/target/feriados-0.0.1-SNAPSHOT.jar
+
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/feriados/target/feriados-0.0.1-SNAPSHOT.jar feriados-api.jar

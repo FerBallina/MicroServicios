@@ -125,7 +125,7 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <configuration>
-                        <mainClass>com.microservicios.feriados.FeriadosApplication</mainClass>
+                        <mainClass>com.example.feriados.FeriadosApplication</mainClass>
                     </configuration>
                     <executions>
                         <execution>

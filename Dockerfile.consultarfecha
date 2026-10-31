@@ -1,17 +1,25 @@
-# Paso 1: Construir el JAR usando el proyecto padre
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
 COPY . .
-# Compila solo el microservicio 'consultarfecha' y sus dependencias necesarias
-RUN mvn clean package -DskipTests -pl consultarfecha -am
+
+# 1. Compila el monorepo empaquetando el módulo específico
+RUN mvn clean package -pl consultarfecha -am -DskipTests
 
 RUN echo "--- CONTENIDO DEL JAR ---" && jar tf /app/consultarfecha/target/consultarfecha-0.0.1-SNAPSHOT.jar
 
+# 2. Forzamos la extracción de dependencias de consultarfecha a una carpeta temporal
+RUN mvn dependency:copy-dependencies -pl consultarfecha -DoutputDirectory=/app/consultarfecha/target/dependency
 
-# Paso 2: Ejecutar la aplicación
 FROM eclipse-temurin:21-jre
 WORKDIR /app
-# Copia el JAR generado dentro de la carpeta del microservicio
+
+# 3. Copiamos el JAR plano resultante de la compilación
 COPY --from=build /app/consultarfecha/target/consultarfecha-0.0.1-SNAPSHOT.jar consultarfecha-api.jar
+
+# 4. Copiamos la carpeta temporal con todas las librerías extraídas
+COPY --from=build /app/consultarfecha/target/dependency /app/dependency
+
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "consultarfecha-api.jar"]
+
+# 5. Iniciamos asociando las dependencias externas y apuntando a tu clase Main verificada
+ENTRYPOINT ["java", "-cp", "consultarfecha-api.jar:/app/dependency/*", "com.example.consultarfecha.ConsultarFechaApplication"]

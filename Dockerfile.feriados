@@ -2,25 +2,18 @@ FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
 COPY . .
 
-# 1. Compila el proyecto generando las clases básicas
+# Compila y reempaqueta el módulo de forma limpia
 RUN mvn clean package -pl feriados -am -DskipTests
 
 RUN echo "--- CONTENIDO DEL JAR ---" && jar tf /app/feriados/target/feriados-0.0.1-SNAPSHOT.jar
 
-
-# 2. Forzamos a Maven a copiar todas las librerías/dependencias externas a una carpeta temporal
-RUN mvn dependency:copy-dependencies -pl feriados -DoutputDirectory=/app/feriados/target/dependency
-
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-# 3. Copiamos tu JAR plano
+# Copiamos el Fat JAR corregido con su estructura interna correcta
 COPY --from=build /app/feriados/target/feriados-0.0.1-SNAPSHOT.jar feriados-api.jar
 
-# 4. Copiamos TODAS las librerías que extrajimos en el paso anterior
-COPY --from=build /app/feriados/target/dependency /app/dependency
+EXPOSE 8082
 
-EXPOSE 8080
-
-# 5. Iniciamos incluyendo tu JAR y la carpeta de dependencias en el Classpath, apuntando a tu Main REAL
-ENTRYPOINT ["java", "-cp", "feriados-api.jar:/app/dependency/*", "com.example.feriados.FeriadosApplication"]
+# Comando nativo estándar
+ENTRYPOINT ["java", "-jar", "feriados-api.jar"]

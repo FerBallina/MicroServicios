@@ -2,25 +2,18 @@ FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
 COPY . .
 
-# 1. Compila el monorepo empaquetando el módulo específico
+# Compila y reempaqueta el módulo de forma limpia
 RUN mvn clean package -pl consultarfecha -am -DskipTests
 
 RUN echo "--- CONTENIDO DEL JAR ---" && jar tf /app/consultarfecha/target/consultarfecha-0.0.1-SNAPSHOT.jar
 
-
-# 2. Forzamos la extracción de dependencias de consultarfecha a una carpeta temporal
-RUN mvn dependency:copy-dependencies -pl consultarfecha -DoutputDirectory=/app/consultarfecha/target/dependency
-
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-# 3. Copiamos el JAR plano resultante de la compilación
+# Copiamos el Fat JAR corregido que ahora contiene todo adentro
 COPY --from=build /app/consultarfecha/target/consultarfecha-0.0.1-SNAPSHOT.jar consultarfecha-api.jar
-
-# 4. Copiamos la carpeta temporal con todas las librerías extraídas
-COPY --from=build /app/consultarfecha/target/dependency /app/dependency
 
 EXPOSE 8080
 
-# 5. Iniciamos asociando las dependencias externas y apuntando a tu clase Main verificada
-ENTRYPOINT ["java", "-cp", "consultarfecha-api.jar:/app/dependency/*", "com.example.consultarfecha.ConsultarFechaApplication"]
+# Comando nativo estándar: Spring Boot sabe exactamente cómo leer el contenido de BOOT-INF
+ENTRYPOINT ["java", "-jar", "consultarfecha-api.jar"]

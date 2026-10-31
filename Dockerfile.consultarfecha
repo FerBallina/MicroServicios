@@ -5,6 +5,9 @@ COPY . .
 # Compila solo el microservicio 'consultarfecha' y sus dependencias necesarias
 RUN mvn clean package -DskipTests -pl consultarfecha -am
 
+RUN echo "--- CONTENIDO DEL JAR ---" && jar tf /app/consultarfecha/target/consultarfecha-0.0.1-SNAPSHOT.jar
+
+
 # Paso 2: Ejecutar la aplicación
 FROM eclipse-temurin:21-jre
 WORKDIR /app

@@ -5,6 +5,9 @@ COPY . .
 # 1. Compila el proyecto generando las clases básicas
 RUN mvn clean package -pl feriados -am -DskipTests
 
+RUN echo "--- CONTENIDO DEL JAR ---" && jar tf /app/feriados/target/feriados-0.0.1-SNAPSHOT.jar
+
+
 # 2. Forzamos a Maven a copiar todas las librerías/dependencias externas a una carpeta temporal
 RUN mvn dependency:copy-dependencies -pl feriados -DoutputDirectory=/app/feriados/target/dependency
 

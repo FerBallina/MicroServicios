@@ -9,6 +9,6 @@ RUN mvn clean package -DskipTests -pl consultarfecha -am
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 # Copia el JAR generado dentro de la carpeta del microservicio
-COPY --from=build /app/consultarfecha/target/*.jar app.jar
+COPY --from=build /app/consultarfecha/target/*.jar consultarfecha-api.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "consultarfecha-api.jar"]

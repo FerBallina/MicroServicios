@@ -1,18 +1,18 @@
-package com.example.consultarfecha.service;
+package com.example.consultarfecha.component;
 
 import com.example.consultarfecha.dto.PdfRequestEvent;
 
 import java.util.concurrent.CountDownLatch;
 
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Service;  
+import org.springframework.stereotype.Component;  
 
-@Service
-public class ConsultaPDFService {
+@Component
+public class ConsultaPDFComponent {
     
     private CountDownLatch latch = new CountDownLatch(1);
 
-    @KafkaListener(topics = "solicitudes-pdf", groupId = "grupo-procesadores-pdf")
+    @KafkaListener(id = "listenerDinamico", topics = "solicitudes-pdf", groupId = "grupo-procesadores-pdf")// autoStartup = "false"
     public void procesarSolicitudPdf(PdfRequestEvent evento) {
         System.out.println("Iniciando generación de PDF para el año: " + evento.getAnio());
         

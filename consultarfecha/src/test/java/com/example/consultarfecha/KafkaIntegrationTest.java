@@ -11,23 +11,21 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.example.consultarfecha.ConsultarFechaApplication;
-import com.example.consultarfecha.controller.ConsultaPDFController;
+import com.example.consultarfecha.component.ConsultaPDFComponent;
 import com.example.consultarfecha.dto.PdfRequestEvent;
-import com.example.consultarfecha.service.ConsultaPDFService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes  = ConsultarFechaApplication.class,
     properties = {
         "spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer",
         "spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.JsonDeserializer",
-        "spring.kafka.consumer.properties.spring.json.trusted.packages=*"
+        "spring.kafka.consumer.properties.spring.json.trusted.packages=*",
+        "spring.kafka.listener.auto-startup=true"
     }
 )
 @AutoConfigureMockMvc // Permite simular las peticiones HTTP al Controller
@@ -43,7 +41,7 @@ public class KafkaIntegrationTest {
     private MockMvc mockMvc; // Simulador HTTP
 
     @Autowired
-    private ConsultaPDFService consumerService; // Tu consumidor real
+    private ConsultaPDFComponent consumerService; // Tu consumidor real
 
     @Autowired
     private ObjectMapper objectMapper; // Para convertir tu objeto a JSON string
@@ -65,6 +63,9 @@ public class KafkaIntegrationTest {
 
         // Convertimos el objeto Java a un String JSON
         String jsonPayload = objectMapper.writeValueAsString(eventoMock);
+        
+        // como por defecto tengo apagado kafka necesito encenderlo primero
+        
 
         // 2. Simular la petición HTTP POST al endpoint del Controller
         mockMvc.perform(MockMvcRequestBuilders.post("/api/pdf/generar")
